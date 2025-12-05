@@ -1,6 +1,6 @@
-# Chatwoot Resend Ingress
+# ActionMailbox Resend
 
-A Rails Engine providing [Resend](https://resend.com) email ingress support for [Chatwoot](https://chatwoot.com) and other Rails applications using ActionMailbox.
+A Rails Engine providing [Resend](https://resend.com) email ingress support for ActionMailbox.
 
 This gem receives webhooks from Resend's inbound email API, verifies signatures via Svix, reconstructs RFC822 MIME messages (including attachments and inline images), and delivers them to ActionMailbox for processing.
 
@@ -20,7 +20,7 @@ This gem receives webhooks from Resend's inbound email API, verifies signatures 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "chatwoot-resend-ingress"
+gem "actionmailbox-resend"
 ```
 
 And then execute:
@@ -46,7 +46,7 @@ In your `config/routes.rb`:
 
 ```ruby
 Rails.application.routes.draw do
-  mount Chatwoot::Resend::Ingress::Engine, at: "/rails/action_mailbox/resend"
+  mount ActionMailbox::Resend::Engine, at: "/rails/action_mailbox/resend"
 end
 ```
 
@@ -106,15 +106,15 @@ Unlike other email providers that send emails in RFC822 format, Resend provides 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rspec` to run the tests.
 
 ```bash
-git clone https://github.com/rcoenen/chatwoot-resend-ingress.git
-cd chatwoot-resend-ingress
+git clone https://github.com/rcoenen/actionmailbox-resend.git
+cd actionmailbox-resend
 bin/setup
 bundle exec rspec
 ```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/rcoenen/chatwoot-resend-ingress.
+Bug reports and pull requests are welcome on GitHub at https://github.com/rcoenen/actionmailbox-resend.
 
 ## License
 

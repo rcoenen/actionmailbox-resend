@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+require_relative "resend/version"
+require_relative "resend/engine"
+
+module ActionMailbox
+  module Resend
+    class Error < StandardError; end
+  end
+end

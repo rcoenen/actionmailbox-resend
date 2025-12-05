@@ -9,7 +9,7 @@ require "action_mailbox/engine"
 require "active_record/railtie"
 
 Bundler.require(*Rails.groups)
-require "chatwoot/resend/ingress"
+require "action_mailbox/resend"
 
 module Dummy
   class Application < Rails::Application

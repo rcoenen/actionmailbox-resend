@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    chatwoot-resend-ingress (1.0.0)
+    actionmailbox-resend (1.0.0)
       rails (>= 7.0)
       svix (~> 1.0)
 
@@ -259,7 +259,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionmailbox
-  chatwoot-resend-ingress!
+  actionmailbox-resend!
   irb
   rails (>= 7.0)
   rake (~> 13.0)

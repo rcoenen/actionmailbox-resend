@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
-require_relative "lib/chatwoot/resend/ingress/version"
+require_relative "lib/action_mailbox/resend/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "chatwoot-resend-ingress"
-  spec.version = Chatwoot::Resend::Ingress::VERSION
+  spec.name = "actionmailbox-resend"
+  spec.version = ActionMailbox::Resend::VERSION
   spec.authors = ["rcoenen"]
   spec.email = ["rcoenen@users.noreply.github.com"]
 
-  spec.summary = "Resend ActionMailbox ingress for Chatwoot"
-  spec.description = "A Rails Engine providing Resend email ingress support for Chatwoot. " \
+  spec.summary = "Resend email ingress for ActionMailbox"
+  spec.description = "A Rails Engine providing Resend email ingress support for ActionMailbox. " \
                      "Receives webhooks from Resend, verifies signatures via Svix, " \
                      "reconstructs RFC822 MIME messages, and delivers to ActionMailbox."
-  spec.homepage = "https://github.com/rcoenen/chatwoot-resend-ingress"
+  spec.homepage = "https://github.com/rcoenen/actionmailbox-resend"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/rcoenen/chatwoot-resend-ingress"
-  spec.metadata["changelog_uri"] = "https://github.com/rcoenen/chatwoot-resend-ingress/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/rcoenen/actionmailbox-resend"
+  spec.metadata["changelog_uri"] = "https://github.com/rcoenen/actionmailbox-resend/blob/main/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   spec.files = Dir.chdir(__dir__) do

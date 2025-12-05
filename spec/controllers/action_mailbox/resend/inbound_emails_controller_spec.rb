@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe Chatwoot::Resend::Ingress::InboundEmailsController, type: :controller do
-  routes { Chatwoot::Resend::Ingress::Engine.routes }
+RSpec.describe ActionMailbox::Resend::InboundEmailsController, type: :controller do
+  routes { ActionMailbox::Resend::Engine.routes }
 
   before do
     setup_resend_env_vars
