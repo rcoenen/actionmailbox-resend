@@ -1,8 +1,10 @@
 # ActionMailbox Resend
 
-A Rails Engine providing [Resend](https://resend.com) email ingress support for ActionMailbox.
+A Rails Engine providing [Resend](https://resend.com) email ingress support for [ActionMailbox](https://guides.rubyonrails.org/action_mailbox_basics.html).
 
-This gem receives webhooks from Resend's inbound email API, verifies signatures via Svix, reconstructs RFC822 MIME messages (including attachments and inline images), and delivers them to ActionMailbox for processing.
+This gem works with **any Rails application** that uses ActionMailbox. It receives webhooks from Resend's inbound email API, verifies signatures via Svix, reconstructs RFC822 MIME messages (including attachments and inline images), and delivers them to ActionMailbox for processing.
+
+> **Note:** This gem was originally developed to add Resend support to [Chatwoot](https://chatwoot.com), but it's a general-purpose ActionMailbox ingress that works with any Rails application.
 
 ## Features
 
@@ -61,17 +63,6 @@ POST /rails/action_mailbox/resend/inbound_emails
 2. **Configure Email Forwarding** to forward emails to your domain
 3. **Add Webhook Endpoint**: `https://your-domain.com/rails/action_mailbox/resend/inbound_emails`
 4. **Copy Webhook Signing Secret** to your `RESEND_WEBHOOK_SECRET` environment variable
-
-## Usage with Chatwoot
-
-After installing the gem, Chatwoot will automatically process inbound emails from Resend through ActionMailbox.
-
-For Chatwoot-specific setup:
-
-1. Add the gem to Chatwoot's Gemfile
-2. Mount the engine in routes.rb (as shown above)
-3. Configure the environment variables
-4. Set up email forwarding in Resend to your support email address
 
 ## How It Works
 
