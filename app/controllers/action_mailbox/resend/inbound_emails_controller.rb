@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "openssl"
+
 # rubocop:disable Metrics/ClassLength
 module ActionMailbox
   module Resend
@@ -141,9 +143,7 @@ module ActionMailbox
         request['Authorization'] = "Bearer #{api_key}"
         request['Content-Type'] = 'application/json'
 
-        response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, open_timeout: 5, read_timeout: 10) do |http|
-          http.request(request)
-        end
+        response = http_request(uri) { |http| http.request(request) }
 
         return JSON.parse(response.body) if response.is_a?(Net::HTTPSuccess)
 
@@ -290,9 +290,7 @@ module ActionMailbox
         metadata_request = Net::HTTP::Get.new(metadata_uri)
         metadata_request['Authorization'] = "Bearer #{api_key}"
 
-        metadata_response = Net::HTTP.start(metadata_uri.hostname, metadata_uri.port, use_ssl: true, open_timeout: 5, read_timeout: 10) do |http|
-          http.request(metadata_request)
-        end
+        metadata_response = http_request(metadata_uri) { |http| http.request(metadata_request) }
 
         unless metadata_response.is_a?(Net::HTTPSuccess)
           Rails.logger.error("Resend API error fetching attachment metadata: #{metadata_response.code} - #{metadata_response.body}")
@@ -317,9 +315,7 @@ module ActionMailbox
         download_uri = URI(download_url)
 
         # Check attachment size before downloading
-        head_response = Net::HTTP.start(download_uri.hostname, download_uri.port, use_ssl: true, open_timeout: 5, read_timeout: 10) do |http|
-          http.head(download_uri.request_uri)
-        end
+        head_response = http_request(download_uri) { |http| http.head(download_uri.request_uri) }
 
         if head_response['content-length'].present?
           content_length = head_response['content-length'].to_i
@@ -329,9 +325,7 @@ module ActionMailbox
           end
         end
 
-        download_response = Net::HTTP.start(download_uri.hostname, download_uri.port, use_ssl: true, open_timeout: 5, read_timeout: 10) do |http|
-          http.get(download_uri.request_uri)
-        end
+        download_response = http_request(download_uri) { |http| http.get(download_uri.request_uri) }
 
         # Block redirects to prevent SSRF attacks
         if download_response.is_a?(Net::HTTPRedirection)
@@ -418,6 +412,30 @@ module ActionMailbox
       rescue URI::InvalidURIError => e
         Rails.logger.error("Invalid URL in Resend webhook: #{url} - #{e.message}")
         false
+      end
+
+      # Returns a cert store configured for broad compatibility.
+      # OpenSSL 3.x enables CRL checking by default, which fails for many CDNs
+      # (including Cloudflare, which fronts Resend's API). This disables CRL
+      # checking while maintaining certificate verification.
+      def default_cert_store
+        store = OpenSSL::X509::Store.new
+        store.set_default_paths
+        store.flags = 0 # Disable CRL checking for OpenSSL 3.x compatibility
+        store
+      end
+
+      def http_request(uri, open_timeout: 5, read_timeout: 10)
+        Net::HTTP.start(
+          uri.hostname,
+          uri.port,
+          use_ssl: true,
+          cert_store: default_cert_store,
+          open_timeout: open_timeout,
+          read_timeout: read_timeout
+        ) do |http|
+          yield http
+        end
       end
     end
   end
