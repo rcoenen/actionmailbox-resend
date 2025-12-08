@@ -29,7 +29,7 @@ module ActionMailbox
 
         # Extract email_id from webhook
         email_id = payload.dig('data', 'email_id')
-        return head(:unprocessable_entity) if email_id.blank?
+        return head(422) if email_id.blank?
 
         # Fetch full email from Resend API
         email_data = fetch_email_from_resend(email_id)

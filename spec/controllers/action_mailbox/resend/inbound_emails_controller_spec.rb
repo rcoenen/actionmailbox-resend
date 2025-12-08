@@ -164,7 +164,7 @@ RSpec.describe ActionMailbox::Resend::InboundEmailsController, type: :controller
         request.headers.merge!(svix_headers(valid: true))
         post :create, body: invalid_payload.to_json
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(422)
       end
     end
 
