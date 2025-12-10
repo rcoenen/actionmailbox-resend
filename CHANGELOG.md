@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.4 - 2025-12-10
+- **Bug fix**: Fix NoMethodError in email normalization for simple non-multipart emails. Changed to use `mail.body.decoded` instead of `mail.decoded` and handle nil content_type properly.
+
 ## 1.0.3 - 2025-12-10
 - **Bug fix**: Normalize email MIME structure for desktop client compatibility. Emails are now restructured to use proper multipart hierarchy (`multipart/mixed` → `multipart/related` → `multipart/alternative`) ensuring `.eml` files extracted from ActionMailbox's Active Storage open correctly in Apple Mail, Thunderbird, and other desktop email clients.
 - Add graceful fallback if normalization fails, logging a warning and using original RFC822 message.
