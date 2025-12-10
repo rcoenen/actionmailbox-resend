@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.3 - 2025-12-10
+- **Bug fix**: Normalize email MIME structure for desktop client compatibility. Emails are now restructured to use proper multipart hierarchy (`multipart/mixed` → `multipart/related` → `multipart/alternative`) ensuring `.eml` files extracted from ActionMailbox's Active Storage open correctly in Apple Mail, Thunderbird, and other desktop email clients.
+- Add graceful fallback if normalization fails, logging a warning and using original RFC822 message.
+
 ## 1.0.2 - 2025-12-08
 - Fix OpenSSL 3.x CRL verification for webhook signature validation ([PR #1](https://github.com/rcoenen/actionmailbox-resend/pull/1), thanks [@lylo](https://github.com/lylo)).
 - Pin development runtime to Ruby 3.4.7 / Bundler 2.7.x; gem requires Ruby >= 3.1.

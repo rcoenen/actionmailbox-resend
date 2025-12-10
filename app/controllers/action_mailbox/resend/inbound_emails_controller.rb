@@ -177,7 +177,11 @@ module ActionMailbox
         # Add attachments if present - this will automatically convert to multipart/mixed
         add_all_attachments(mail, email_data) if has_attachments
 
-        mail.to_s
+        # Normalize MIME structure for desktop email client compatibility
+        normalize_mail_for_display(mail).to_s
+      rescue StandardError => e
+        Rails.logger.warn("Resend: Failed to normalize email structure - #{e.message}")
+        mail.to_s # Fall back to original if normalization fails
       end
 
       # rubocop:disable Metrics/AbcSize
@@ -436,6 +440,56 @@ module ActionMailbox
         ) do |http|
           yield http
         end
+      end
+
+      # Normalize email MIME structure for desktop email client compatibility
+      # Restructures to: multipart/mixed -> multipart/related -> multipart/alternative
+      # This ensures .eml files open correctly in Apple Mail, Thunderbird, etc.
+      def normalize_mail_for_display(mail)
+        mixed = Mail.new
+        # Copy all headers including threading headers
+        mixed.subject = mail.subject
+        mixed.from = mail.from
+        mixed.to = mail.to
+        mixed.cc = mail.cc if mail.cc.present?
+        mixed.bcc = mail.bcc if mail.bcc.present?
+        mixed.message_id = mail.message_id if mail.message_id.present?
+        mixed.in_reply_to = mail.in_reply_to if mail.in_reply_to.present?
+        mixed.references = mail.references if mail.references.present?
+        mixed.content_type = 'multipart/mixed'
+
+        related = Mail::Part.new
+        related.content_type = 'multipart/related'
+
+        alt = Mail::Part.new
+        alt.content_type = 'multipart/alternative'
+        if mail.multipart?
+          alt.add_part(mail.text_part) if mail.text_part
+          alt.add_part(mail.html_part) if mail.html_part
+        else
+          alt.add_part(Mail::Part.new { body mail.decoded; content_type mail.content_type })
+        end
+        related.add_part(alt)
+
+        mail.attachments.each do |att|
+          if att.inline?
+            # Use attachments.inline[] to preserve Content-Disposition: inline
+            related.attachments.inline[att.filename] = {
+              content_type: att.content_type,
+              content: att.body.decoded
+            }
+            # Preserve Content-ID
+            related.attachments.last.content_id = att.cid if att.cid.present?
+          else
+            mixed.attachments[att.filename] = {
+              content_type: att.content_type,
+              content: att.body.decoded
+            }
+          end
+        end
+
+        mixed.add_part(related)
+        mixed
       end
     end
   end
