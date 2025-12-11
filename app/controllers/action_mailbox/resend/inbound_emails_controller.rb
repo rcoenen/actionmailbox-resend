@@ -447,15 +447,10 @@ module ActionMailbox
       # This ensures .eml files open correctly in Apple Mail, Thunderbird, etc.
       def normalize_mail_for_display(mail)
         mixed = Mail.new
-        # Copy all headers including threading headers
-        mixed.subject = mail.subject
-        mixed.from = mail.from
-        mixed.to = mail.to
-        mixed.cc = mail.cc if mail.cc.present?
-        mixed.bcc = mail.bcc if mail.bcc.present?
-        mixed.message_id = mail.message_id if mail.message_id.present?
-        mixed.in_reply_to = mail.in_reply_to if mail.in_reply_to.present?
-        mixed.references = mail.references if mail.references.present?
+        # Copy all headers from original mail to preserve custom headers
+        mail.header.fields.each do |field|
+          mixed.header[field.name] = field.value unless field.name == 'Content-Type'
+        end
         mixed.content_type = 'multipart/mixed'
 
         related = Mail::Part.new

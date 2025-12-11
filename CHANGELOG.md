@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.5 - 2025-12-10
+- **Bug fix**: Preserve all headers from original email during normalization. Changed from copying specific headers (subject, from, to, etc.) to copying all headers except Content-Type. This ensures custom headers like `X-Original-To` are preserved, fully aligning the gem with the Rails PR implementation.
+
 ## 1.0.4 - 2025-12-10
 - **Bug fix**: Fix NoMethodError in email normalization for simple non-multipart emails. Changed to use `mail.body.decoded` instead of `mail.decoded` and handle nil content_type properly.
 

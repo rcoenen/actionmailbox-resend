@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    actionmailbox-resend (1.0.3)
+    actionmailbox-resend (1.0.4)
       rails (>= 7.0)
       svix (~> 1.0)
 
